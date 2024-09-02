@@ -1,0 +1,44 @@
+<!-- res/values/arrays.xml -->
+<resources>
+        <!-- Add more options up to 255 -->
+
+    <string-array name="sample_average_options">
+        <item>1</item>
+        <item>2</item>
+        <item>4</item>
+        <item>8</item>
+        <item>16</item>
+        <item>32</item>
+    </string-array>
+
+    <string-array name="led_mode_options">
+        <item>Red only</item>
+        <item>Red + IR</item>
+        <item>Red + IR + Green</item>
+    </string-array>
+
+    <string-array name="sample_rate_options">
+        <item>50</item>
+        <item>100</item>
+        <item>200</item>
+        <item>400</item>
+        <item>800</item>
+        <item>1000</item>
+        <item>1600</item>
+        <item>3200</item>
+    </string-array>
+
+    <string-array name="pulse_width_options">
+        <item>69</item>
+        <item>118</item>
+        <item>215</item>
+        <item>411</item>
+    </string-array>
+
+    <string-array name="adc_range_options">
+        <item>2048</item>
+        <item>4096</item>
+        <item>8192</item>
+        <item>16384</item>
+    </string-array>
+</resources>
