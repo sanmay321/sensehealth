@@ -125,8 +125,8 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
 
         lineChart = binding.plot
         lineDataSet = LineDataSet(mutableListOf(), "Live Data1")
-        lineDataSet1 = LineDataSet(mutableListOf(), "Live Data2")
-        lineData = LineData(lineDataSet,lineDataSet1)
+//        lineDataSet1 = LineDataSet(mutableListOf(), "Live Data2")
+        lineData = LineData(lineDataSet)
         lineChart.data = lineData
         // Customize X-axis text color
         lineChart.xAxis.textColor = Color.WHITE
@@ -142,12 +142,12 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
             textColor = Color.WHITE // Optional: Set the text color
         }
 
-        lineDataSet1.apply {
-            mode = LineDataSet.Mode.CUBIC_BEZIER
-            setDrawCircles(false)
-            lineWidth = 2f
-            color = Color.BLUE // Set color for the second data set
-        }
+//        lineDataSet1.apply {
+//            mode = LineDataSet.Mode.CUBIC_BEZIER
+//            setDrawCircles(false)
+//            lineWidth = 2f
+//            color = Color.BLUE // Set color for the second data set
+//        }
 
 // Customize Y-axis text color
         lineChart.axisLeft.textColor = Color.WHITE
@@ -183,13 +183,15 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
                 binding.startbutton.setVisibility(View.INVISIBLE)
                 binding.Stopbutton.setVisibility(View.VISIBLE)
                 binding.advancebutton.isEnabled = false
-                if (StartclickedOnce) {
-                    StartclickedOnce = false
-                    val data = sharedPreferences.getString("STRING_KEY", "")
-                    if (data != null) {
-                        sendData(data.toByteArray())
-                    }
-                }
+
+                askMode()
+//                if (StartclickedOnce) {
+//                    StartclickedOnce = false
+//                    val data = sharedPreferences.getString("STRING_KEY", "")
+//                    if (data != null) {
+//                        sendData(data.toByteArray())
+//                    }
+//                }
             }
         }
         binding.Stopbutton.setOnClickListener {
@@ -220,7 +222,6 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
                 } else {
                     Toast.makeText(this, "off", Toast.LENGTH_SHORT).show()
                     showDeviceListDialog()
-//                    connectToDevice("A8:42:E3:A8:9F:A2")
                 }
             }
         }
@@ -236,9 +237,31 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
         // Request permissions and start scanning
     }
 
+    private fun askMode() {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Enter file name")
 
+            val inflater = layoutInflater
+            val dialogLayout = inflater.inflate(R.layout.dialog_filename, null)
+            builder.setView(dialogLayout)
 
+            val filenameInput: EditText = dialogLayout.findViewById(R.id.filename_input)
 
+            builder.setPositiveButton("OK") { dialog, which ->
+                val fileName = filenameInput.text.toString().trim()
+                if (fileName.isNotEmpty()) {
+                    sendData(fileName.toByteArray())
+                } else {
+                    Toast.makeText(this, "field cannot be empty", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            builder.setNegativeButton("Cancel") { dialog, which ->
+                dialog.dismiss()
+            }
+
+                builder.show()
+    }
 
 
     private fun connectToDevice(address: String) {
@@ -387,7 +410,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
 
     private fun updateChart(y1: Float, y2: Float,x:Float) {
         val entry1 = Entry(xValue1, y1)
-        val entry2 = Entry(xValue2, y2)
+//        val entry2 = Entry(xValue2, y2)
 
         xValue1 += 0.005f
         xValue2 += 0.005f
@@ -395,19 +418,19 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
         runOnUiThread {
             // Add data points to both LineDataSets
             lineDataSet.addEntry(entry1)
-            lineDataSet1.addEntry(entry2)
+//            lineDataSet1.addEntry(entry2)
 
             // Remove first entry if data set exceeds max points
             if (lineDataSet.entryCount > MAX_DATA_POINTS) {
                 lineDataSet.removeFirst()
             }
-            if (lineDataSet1.entryCount > MAX_DATA_POINTS) {
-                lineDataSet1.removeFirst()
-            }
+//            if (lineDataSet1.entryCount > MAX_DATA_POINTS) {
+//                lineDataSet1.removeFirst()
+//            }
 
             // Notify data changes and refresh the chart
             lineDataSet.notifyDataSetChanged()
-            lineDataSet1.notifyDataSetChanged()
+//            lineDataSet1.notifyDataSetChanged()
             lineData.notifyDataChanged()
             lineChart.notifyDataSetChanged()
             lineChart.invalidate()
@@ -448,6 +471,7 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
                 txCharacteristic = service?.getCharacteristic(YOUR_TX_UUID)
 //                binding.connectbutton.setVisibility(View.INVISIBLE)
 //                binding.disconnectbutton.setVisibility(View.VISIBLE)
+                bluetoothGatt?.device?.let { connectToDevice(it.address) }
                 txCharacteristic?.let { enableNotifications(gatt, it) }
             }
         }
